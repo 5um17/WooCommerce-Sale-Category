@@ -20,7 +20,7 @@ class WC_Integration_Sale_Category extends WC_Integration {
 
 		$this->init_settings();
 		// Define user set variables.
-		$this->sale_category = intval( $this->get_option( 'sale_category' ) );
+		$this->sale_category = apply_filters( 'wpml_object_id', intval( $this->get_option( 'sale_category' ) ), 'product_cat', true );
 		$this->bulk_process = $this->get_option( 'bulk_process' );
 		// Actions.
 		add_action( 'woocommerce_update_options_integration_' .  $this->id, array( $this, 'process_admin_options' ) ); // save form data
@@ -84,10 +84,10 @@ class WC_Integration_Sale_Category extends WC_Integration {
 
     if ( $is_on_sale ) {
       // product is on sale, let's assign the sale category
-      wp_set_object_terms( $post_id, $this->sale_category, 'product_cat', true );
+      wp_set_object_terms( apply_filters( 'wpml_object_id', $post_id, 'product', true ), $this->sale_category, 'product_cat', true );
     } else {
       // product is not on sale, let's remove the sale category
-      wp_remove_object_terms( $post_id, $this->sale_category, 'product_cat' );
+      wp_remove_object_terms( apply_filters( 'wpml_object_id', $post_id, 'product', true ), $this->sale_category, 'product_cat' );
     }
   }
 
@@ -113,7 +113,7 @@ class WC_Integration_Sale_Category extends WC_Integration {
 			return;
 		}
 		foreach ( $products as $post_id) {
-			wp_set_object_terms( $post_id, $sale_category, 'product_cat', true );
+			wp_set_object_terms( apply_filters( 'wpml_object_id', $post_id, 'product', true ), $sale_category, 'product_cat', true );
 		}
 		WC_Admin_Settings::add_message( __( count($products) . ' products processed', 'woocommerce-sale-category' ) );
 	}
